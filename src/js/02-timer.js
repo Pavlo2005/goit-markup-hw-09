@@ -1,5 +1,20 @@
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+
 const input = document.querySelector(".js-input");
 const buttonStart = document.querySelector('.js-button-start');
+
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    console.log(selectedDates[0]);
+  },
+};
+
+flatpickr(input, options);
 
 const element = {
     days: document.querySelector('.js-days'),
@@ -34,29 +49,43 @@ function checkButton() {
     intervalId = setInterval(() => {
         const current = new Date();
         
-        const timeDifference = inputData - current;
+        const timeDifference = convertMs(inputData - current);
 
         if (timeDifference <= 1) {
             clearInterval(intervalId);
 
-            element.days.textContent = 0;
-            element.hours.textContent = 0;
-            element.minutes.textContent = 0;
-            element.seconds.textContent = 0;
+            element.days.textContent ='00';
+            element.hours.textContent = '00';
+            element.minutes.textContent = '00';
+            element.seconds.textContent = '00';
 
             return;
         }
 
-        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
-
-        element.days.textContent = days;
-        element.hours.textContent = hours;
-        element.minutes.textContent = minutes;
-        element.seconds.textContent = seconds;
+        element.days.textContent = timeDifference.days;
+        element.hours.textContent = timeDifference.hours;
+        element.minutes.textContent = timeDifference.minutes;
+        element.seconds.textContent = timeDifference.seconds;
 
     }, 1000)
 
+}
+
+function convertMs(ms) {
+  // Number of milliseconds per unit of time
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+
+  // Remaining days
+  const days = Math.floor(ms / day).toString().padStart(2, '0');
+  // Remaining hours
+  const hours = Math.floor((ms % day) / hour).toString().padStart(2, '0');
+  // Remaining minutes
+  const minutes = Math.floor(((ms % day) % hour) / minute).toString().padStart(2, '0');
+  // Remaining seconds
+  const seconds = Math.floor((((ms % day) % hour) % minute) / second).toString().padStart(2, '0');
+
+  return { days, hours, minutes, seconds };
 }
