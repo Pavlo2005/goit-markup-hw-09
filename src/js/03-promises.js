@@ -23,7 +23,9 @@ function handlerClick(evt) {
 
   evt.preventDefault();
 
-  for (let i = 0; i < parseInt(element.amount.value); i += 1){
+  element.submit.disabled = true;
+
+  for (let i = 0; i < parseInt(element.amount.value); i += 1) {
     setTimeout(() => {
       createPromise(i + 1, parseInt(element.delay.value) + ((i) * parseInt(element.step.value)))
         .then(({ position, delay }) => {
@@ -32,7 +34,10 @@ function handlerClick(evt) {
         .catch(({ position, delay }) => {
           console.log(`❌ Rejected promise ${position} in ${delay}ms`);
         });
-    }, parseInt(element.delay.value) + ((i) * parseInt(element.step.value)) )
+    }, parseInt(element.delay.value) + ((i) * parseInt(element.step.value)))
   }
+  setTimeout(() => {
+    element.submit.disabled = false;
+  }, parseInt(element.delay.value) + (parseInt(element.amount.value) * parseInt(element.step.value)));
 
 }

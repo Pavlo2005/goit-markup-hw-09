@@ -17,10 +17,10 @@ const options = {
 flatpickr(input, options);
 
 const element = {
-    days: document.querySelector('.js-days'),
-    hours: document.querySelector('.js-hours'),
-    minutes: document.querySelector('.js-minutes'),
-    seconds: document.querySelector('.js-seconds')
+  days: document.querySelector('.js-days'),
+  hours: document.querySelector('.js-hours'),
+  minutes: document.querySelector('.js-minutes'),
+  seconds: document.querySelector('.js-seconds')
 }
 
 let intervalId = null;
@@ -28,46 +28,48 @@ let intervalId = null;
 input.addEventListener('input', checkInput);
 
 function checkInput() {
-    const inputData = new Date(input.value);
-    const current = new Date();
+  const inputData = new Date(input.value);
+  const current = new Date();
+  if (inputData - current <= 0) {
+    buttonStart.disabled = true;
+    window.alert("Please choose a date in the future");
+  }
+  else {
+    buttonStart.disabled = false;
+  }
 
-    console.log(inputData - current);
-    if (inputData - current <= 0) 
-        buttonStart.disabled = true;
-    else
-        buttonStart.disabled = false;
 }
 
 buttonStart.addEventListener('click', checkButton);
 
 function checkButton() {
-    console.log(input.value);
+  console.log(input.value);
 
-    const inputData = new Date(input.value);
-    clearInterval(intervalId);
+  const inputData = new Date(input.value);
+  clearInterval(intervalId);
 
-    intervalId = setInterval(() => {
-        const current = new Date();
-        
-        const timeDifference = convertMs(inputData - current);
+  intervalId = setInterval(() => {
+    const current = new Date();
 
-        if (timeDifference <= 1) {
-            clearInterval(intervalId);
+    const timeDifference = convertMs(inputData - current);
 
-            element.days.textContent ='00';
-            element.hours.textContent = '00';
-            element.minutes.textContent = '00';
-            element.seconds.textContent = '00';
+    element.days.textContent = timeDifference.days;
+    element.hours.textContent = timeDifference.hours;
+    element.minutes.textContent = timeDifference.minutes;
+    element.seconds.textContent = timeDifference.seconds;
 
-            return;
-        }
+    if (inputData <= current) {
+      clearInterval(intervalId);
 
-        element.days.textContent = timeDifference.days;
-        element.hours.textContent = timeDifference.hours;
-        element.minutes.textContent = timeDifference.minutes;
-        element.seconds.textContent = timeDifference.seconds;
+      element.days.textContent = '00';
+      element.hours.textContent = '00';
+      element.minutes.textContent = '00';
+      element.seconds.textContent = '00';
 
-    }, 1000)
+      return;
+    }
+
+  }, 1000)
 
 }
 
